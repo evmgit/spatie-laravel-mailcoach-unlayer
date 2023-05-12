@@ -8,16 +8,14 @@ use Spatie\Mailcoach\Domain\Automation\Support\Replacers\ReplacerWithHelpText as
 use Spatie\Mailcoach\Domain\Campaign\Enums\TagType;
 use Spatie\Mailcoach\Domain\Campaign\Models\Campaign;
 use Spatie\Mailcoach\Domain\Campaign\Models\Concerns\HasHtmlContent;
-use Spatie\Mailcoach\Domain\Campaign\Models\Template;
 use Spatie\Mailcoach\Domain\Campaign\Support\Replacers\ReplacerWithHelpText as CampaignReplacerWithHelpText;
 use Spatie\Mailcoach\Domain\Shared\Support\Editor\Editor;
-use Spatie\Mailcoach\Domain\TransactionalMail\Models\TransactionalMailTemplate;
 
 class UnlayerEditor implements Editor
 {
     public function render(HasHtmlContent $model): string
     {
-        $replacers = match ($model::class) {
+        $replacers = match($model::class) {
             AutomationMail::class => config('mailcoach.automation.replacers'),
             default => config('mailcoach.campaigns.replacers'),
         };
@@ -30,8 +28,8 @@ class UnlayerEditor implements Editor
         $options = array_merge_recursive([
             'id' => 'editor',
             'displayMode' => 'email',
-            'features' => ['textEditor' => ['spellChecker' => true]],
-            'tools' => ['form' => ['enabled' => false]],
+            'features'=> ['textEditor' => ['spellChecker' => true]],
+            'tools'=> ['form' => ['enabled' => false]],
             'specialLinks' => $this->getSpecialLinks($model),
         ], config('mailcoach.unlayer.options', []));
 
@@ -41,7 +39,6 @@ class UnlayerEditor implements Editor
                 'structuredHtml' => old('structured_html', $model->getStructuredHtml()),
                 'replacers' => $replacers,
                 'options' => $options,
-                'showTestButton' => ! $model instanceof Template && ! $model instanceof TransactionalMailTemplate,
             ])
             ->render();
     }

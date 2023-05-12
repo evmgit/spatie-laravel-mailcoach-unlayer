@@ -9,14 +9,12 @@ class UploadController
 {
     public function __invoke(UploadRequest $request)
     {
-        $diskName = config('mailcoach.unlayer.disk_name') ?? config('media-library.disk_name') ?? config('medialibrary.disk_name') ?? 'public';
-
         $upload = Upload::create();
         $media = $upload
             ->addMediaFromRequest('file')
             ->toMediaCollection(
                 'default',
-                $diskName,
+                config('mailcoach.unlayer.disk_name', config('medialibrary.disk_name', 'public')),
             );
 
         return response()->json(['url' => $media->getFullUrl('image')]);
